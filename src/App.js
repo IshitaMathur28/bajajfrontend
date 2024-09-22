@@ -1,23 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
 
 function App() {
+  const [inputData, setInputData] = useState('');
+  const [responseData, setResponseData] = useState(null);
+  const [selectedFilter, setSelectedFilter] = useState([]);
+
+  const handleInputChange = (e) => {
+    setInputData(e.target.value);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('https://bajajbackend-seven.vercel.app/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: inputData,
+      });
+      const data = await response.json();
+      setResponseData(data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Your Roll Number (website title)</h1>
+      <textarea
+        placeholder='Enter JSON here'
+        value={inputData}
+        onChange={handleInputChange}
+      />
+      <button onClick={handleSubmit}>Submit</button>
+      
+      {responseData && (
+        <div>
+          <h2>Response:</h2>
+          <pre>{JSON.stringify(responseData, null, 2)}</pre>
+        </div>
+      )}
     </div>
   );
 }
